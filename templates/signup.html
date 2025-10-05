@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Manifest + Icons -->
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='images/icon-192.png') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icon-512.png') }}">
+  <meta name="theme-color" content="#F95B5B">
+  <title>Sign Up - Masika Health</title>
+  
+  <!-- Fonts and Icons (same as products/login page) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    /* Base theme variables from your other pages */
+    :root {
+      --primary-color: #F95B5B; --primary-dark: #E84A4A; --primary-glow: rgba(249, 91, 91, 0.25); --page-bg: #fef9f8; --container-bg: #ffffff; --section-bg: #FFF5F5; --text-primary: #1e2022; --text-secondary: #5a6472; --white-color: #ffffff; --border-color: #f3e6e6; --border-radius-phone: 40px; --border-radius-element: 14px; --transition-smooth: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); --transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --success-color: #4CAF50; --success-bg: #E9F8F1; --success-text: #17834D;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; width: 100%; font-family: 'Poppins', sans-serif; }
+    /* MODIFIED: Removed flex centering and padding. */
+    body { background-color: var(--page-bg); }
+
+    /* MODIFIED: Changed from smartphone simulator to a full-screen app container. */
+    .smartphone { width: 100%; height: 100%; background-color: var(--white-color); display: flex; overflow: hidden; position: relative; /* Removed: fixed-width, max-height, border-radius, box-shadow */ }
+    /* MODIFIED: Removed border-radius and added centering for its content. */
+    .screen-content { width: 100%; height: 100%; background-color: var(--container-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
+
+    /* Signup Content Styling */
+    /* MODIFIED: Added max-width for better large-screen readability */
+    .signup-container { padding: 30px; width: 100%; max-width: 420px; flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; justify-content: center;}
+    .signup-container::-webkit-scrollbar { display: none; }
+    .signup-container { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .welcome-header { text-align: center; margin-bottom: 25px; animation: fadeInDown 0.8s ease-in-out both; }
+    .welcome-header h2 { font-size: 28px; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .welcome-header p { font-size: 15px; color: var(--text-secondary); }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Form Styling with staggered animations */
+    .form-group { position: relative; margin-bottom: 18px; }
+    .form-group:nth-of-type(1) { animation: fadeInUp 0.8s 0.2s ease-in-out both; }
+    .form-group:nth-of-type(2) { animation: fadeInUp 0.8s 0.3s ease-in-out both; }
+    .form-group:nth-of-type(3) { animation: fadeInUp 0.8s 0.4s ease-in-out both; }
+    #password-group { animation: fadeInUp 0.8s 0.5s ease-in-out both; } 
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .form-group label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+    /* --- FIX: Input Wrapper to keep icon position stable --- */
+    .input-wrapper { position: relative; }
+
+    .themed-input { width: 100%; padding: 14px 14px 14px 50px; border: 2px solid var(--border-color); border-radius: var(--border-radius-element); background: var(--section-bg); font-family: 'Poppins', sans-serif; font-size: 15px; color: var(--text-primary); transition: all var(--transition-fast); }
+    .themed-input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+    .themed-input:focus { outline: none; border-color: var(--primary-color); background-color: var(--white-color); box-shadow: 0 0 0 4px var(--primary-glow); }
+    
+    /* Icon positioning is now relative to .input-wrapper */
+    .input-icon { position: absolute; top: 50%; left: 18px; transform: translateY(-50%); color: var(--text-secondary); font-size: 18px; transition: color var(--transition-fast); }
+    .themed-input:focus ~ .input-icon { color: var(--primary-color); }
+    
+    /* --- FIX: Properly aligned password validation styles --- */
+    #password-requirements { 
+        list-style-type: none; 
+        margin-top: 15px; /* Added margin for spacing */
+        height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: height 0.4s ease-out, opacity 0.4s ease-out;
+    }
+    #password-requirements.visible {
+        height: 110px; /* Adjusted height for better spacing */
+        opacity: 1;
+    }
+    #password-requirements li {
+        font-size: 13px; color: var(--text-secondary);
+        display: flex; align-items: center; gap: 8px;
+        margin-bottom: 8px; /* Added space between items */
+        transition: color 0.3s ease;
+    }
+    #password-requirements li .icon { font-size: 14px; transition: color 0.3s ease, transform 0.3s ease; }
+    #password-requirements li.valid { color: var(--success-text); font-weight: 500; }
+    #password-requirements li.valid .icon { color: var(--success-color); transform: scale(1.1); }
+    
+    /* Signup Button Styling */
+    .signup-btn { margin-top: 10px; padding: 15px; width: 100%; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; border: none; border-radius: var(--border-radius-element); font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 20px -6px var(--primary-glow); transition: all var(--transition-smooth); position: relative; overflow: hidden; animation: fadeInUp 0.8s 0.6s ease-in-out both; opacity: 0.5; pointer-events: none; /* Initially disabled */ }
+    .signup-btn.enabled { opacity: 1; pointer-events: all; }
+    .signup-btn.enabled:hover { transform: translateY(-3px); box-shadow: 0 12px 25px -5px var(--primary-glow); }
+    .signup-btn .btn-text { transition: opacity 0.2s ease-out; }
+    .signup-btn .loader { position: absolute; top: 50%; left: 50%; margin-top: -12px; margin-left: -12px; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--white-color); border-radius: 50%; animation: spin 0.8s linear infinite; opacity: 0; transition: opacity 0.2s ease-in; }
+    .signup-btn.loading .btn-text { opacity: 0; }
+    .signup-btn.loading .loader { opacity: 1; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Extra Links & Messages */
+    .extra { margin-top: 20px; text-align: center; font-size: 14px; color: var(--text-secondary); animation: fadeInUp 0.8s 0.7s ease-in-out both;}
+    .extra a { color: var(--primary-dark); text-decoration: none; font-weight: 600; }
+    .flash-message { margin-bottom: 15px; padding: 12px 15px; border-radius: var(--border-radius-element); font-size: 14px; font-weight: 500; border-left: 5px solid; }
+    .flash-success { background: var(--success-bg); color: var(--success-text); border-color: var(--success-color); }
+    .flash-danger { background: #FEF0F1; color: #D73244; border-color: #E84A4A; }
+    .flash-warning { background: #FFF9E9; color: #C59714; border-color: #F0A830; }
+
+  </style>
+</head>
+<body>
+
+  <div class="smartphone">
+    <div class="screen-content">
+      <div class="signup-container">
+        <div class="welcome-header">
+          <h2>Create Account</h2>
+          <p>Start your wellness journey with us</p>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('signup') }}" id="signup-form">
+          <div class="form-group">
+            <label for="full_name">Full Name:</label>
+            <div class="input-wrapper">
+                <input type="text" id="full_name" name="full_name" class="themed-input" placeholder="Enter your full name" required>
+                <i class="fa-solid fa-user input-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email:</label>
+             <div class="input-wrapper">
+                <input type="email" id="email" name="email" class="themed-input" placeholder="Enter your email" required>
+                <i class="fa-solid fa-at input-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="age">Age:</label>
+             <div class="input-wrapper">
+                <input type="number" id="age" name="age" class="themed-input" placeholder="Enter your age" required>
+                <i class="fa-solid fa-cake-candles input-icon"></i>
+            </div>
+          </div>
+          
+          <div class="form-group" id="password-group">
+            <label for="password">Password:</label>
+            <!-- FIX: Input and icon are now inside the wrapper -->
+            <div class="input-wrapper">
+                <input type="password" id="password" name="password" class="themed-input" placeholder="Create a strong password" required>
+                <i class="fa-solid fa-lock input-icon"></i>
+            </div>
+            
+            <!-- This checklist now sits outside the wrapper, so it doesn't affect the icon -->
+            <ul id="password-requirements">
+                <li id="req-length"><i class="icon fa-regular fa-circle"></i><span>At least 8 characters long</span></li>
+                <li id="req-uppercase"><i class="icon fa-regular fa-circle"></i><span>Contains an uppercase letter</span></li>
+                <li id="req-number"><i class="icon fa-regular fa-circle"></i><span>Contains a number</span></li>
+                <li id="req-special"><i class="icon fa-regular fa-circle"></i><span>Contains a special character (!@#..)</span></li>
+            </ul>
+          </div>
+          
+          <button type="submit" class="signup-btn" id="signup-btn">
+            <span class="btn-text">Create Account</span>
+            <div class="loader"></div>
+          </button>
+        </form>
+
+        <div class="extra">
+          <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // The JavaScript logic does not need to be changed as it works with the corrected structure.
+    document.addEventListener('DOMContentLoaded', () => {
+        const passwordInput = document.getElementById('password');
+        const requirementsBox = document.getElementById('password-requirements');
+        const signupForm = document.getElementById('signup-form');
+        const signupBtn = document.getElementById('signup-btn');
+
+        const requirements = {
+            length: document.getElementById('req-length'),
+            uppercase: document.getElementById('req-uppercase'),
+            number: document.getElementById('req-number'),
+            special: document.getElementById('req-special')
+        };
+        
+        const validators = {
+            length: value => value.length >= 8,
+            uppercase: value => /[A-Z]/.test(value),
+            number: value => /[0-9]/.test(value),
+            special: value => /[!@#$%^&*(),.?":{}|<>]/.test(value)
+        };
+
+        passwordInput.addEventListener('focus', () => {
+            requirementsBox.classList.add('visible');
+        });
+
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            let allValid = true;
+
+            for (const key in validators) {
+                const isValid = validators[key](password);
+                const reqElement = requirements[key];
+                const icon = reqElement.querySelector('.icon');
+
+                if (isValid) {
+                    reqElement.classList.add('valid');
+                    icon.classList.remove('fa-circle');
+                    icon.classList.add('fa-check-circle');
+                } else {
+                    reqElement.classList.remove('valid');
+                    icon.classList.remove('fa-check-circle');
+                    icon.classList.add('fa-circle');
+                    allValid = false;
+                }
+            }
+            
+            if (allValid) {
+                signupBtn.classList.add('enabled');
+            } else {
+                signupBtn.classList.remove('enabled');
+            }
+        });
+
+        signupForm.addEventListener('submit', (e) => {
+            if (!signupBtn.classList.contains('enabled')) {
+                e.preventDefault(); 
+                return;
+            }
+
+            if (signupForm.checkValidity()) {
+                signupBtn.classList.add('loading');
+                signupBtn.disabled = true;
+            }
+        });
+    });
+  </script>
+
+</body>
+</html>

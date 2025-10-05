@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Manifest + Icons -->
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='images/icon-192.png') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icon-512.png') }}">
+  <meta name="theme-color" content="#F95B5B">
+  <title>Login - Masika Health</title>
+  
+  <!-- Fonts and Icons (from both files) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    /* 
+      =================================
+      MERGED STYLESHEET
+      All styles from loading.html and login.html are combined here.
+      =================================
+    */
+    
+    /* Base theme variables (Consistent across both files) */
+    :root {
+      --primary-color: #F95B5B; --primary-dark: #E84A4A; --primary-glow: rgba(249, 91, 91, 0.25); --page-bg: #fef9f8; --container-bg: #ffffff; --section-bg: #FFF5F5; --text-primary: #1e2022; --text-secondary: #5a6472; --white-color: #ffffff; --border-color: #f3e6e6; --border-radius-phone: 40px; --border-radius-element: 14px; --transition-smooth: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); --transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; width: 100%; font-family: 'Poppins', sans-serif; overflow: hidden; /* Prevent scrolling */ }
+    
+    /* MODIFIED: Removed flex centering and padding for a full-screen app experience. */
+    body {
+        background-color: var(--page-bg);
+    }
+
+    /* MODIFIED: Changed from a fixed-width simulator to a full-screen container. */
+    .smartphone {
+        width: 100%; height: 100%;
+        background-color: var(--white-color);
+        display: flex; overflow: hidden; position: relative;
+        /* Removed: fixed-width, max-height, border-radius, box-shadow */
+    }
+    
+    /* MODIFIED: Removed border-radius as the container is now full-width. */
+    .screen-content {
+        width: 100%; height: 100%;
+        background-color: var(--container-bg); 
+        display: flex; flex-direction: column; overflow: hidden;
+        align-items: center; /* Center content horizontally */
+        justify-content: center; /* Center content vertically */
+        /* Removed: border-radius */
+    }
+
+    /* 
+      --- STYLES FROM loading.html --- 
+    */
+    /* MODIFIED: Added max-width to keep content centered nicely on large screens. */
+    .loading-wrapper { 
+        width: 100%;
+        max-width: 420px; 
+        padding: 30px;
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        text-align: center;
+        transition: opacity 0.4s ease-out; /* For fade-out effect */
+    }
+    .logo-animation-container { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; }
+    .logo { width: 100px; height: 100px; z-index: 2; filter: drop-shadow(0 8px 15px rgba(0,0,0,0.08)); animation: heartbeat 2s ease-in-out infinite; }
+    
+    .logo-animation-container::before,
+    .logo-animation-container::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid var(--primary-glow); border-radius: 50%; z-index: 1; animation: radiate 2s ease-out infinite; }
+    .logo-animation-container::after { animation-delay: 1s; }
+
+    /* Heading for the loading text animation */
+    #brand-name-animated {
+      font-size: 30px; font-weight: 700; color: var(--primary-dark); 
+      margin-bottom: 5px; letter-spacing: 2px; min-height: 45px; 
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.1s ease-in-out; 
+    }
+    
+    .loading-wrapper p { /* Target p inside loader specifically */
+      color: var(--text-secondary); font-size: 14px; font-weight: 500;
+      animation: fadeIn 1s 0.2s ease-in-out both;
+    }
+
+    /* Animations from loading.html */
+    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes radiate { from { width: 80%; height: 80%; opacity: 1; } to { width: 200%; height: 200%; opacity: 0; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* 
+      --- STYLES FROM login.html --- 
+    */
+    /* MODIFIED: Added max-width to match the loading wrapper. */
+    .login-container {
+        padding: 40px 30px; 
+        width: 100%;
+        max-width: 420px;
+        display: none; /* MODIFICATION: Initially hidden */
+        opacity: 0;     /* MODIFICATION: Initially transparent */
+        flex-direction: column; 
+        justify-content: center;
+        flex-grow: 1;
+        transition: opacity 0.8s ease-in-out; /* For fade-in effect */
+    }
+    
+    .welcome-header { text-align: center; margin-bottom: 30px; animation: fadeInDown 0.8s ease-in-out both; }
+    .welcome-header h2 { font-size: 28px; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+    .welcome-header p { font-size: 15px; color: var(--text-secondary); }
+
+    .form-group { position: relative; margin-bottom: 20px; }
+    .form-group:nth-of-type(1) { animation: fadeInUp 0.8s 0.2s ease-in-out both; }
+    .form-group:nth-of-type(2) { animation: fadeInUp 0.8s 0.3s ease-in-out both; }
+    
+    .form-group label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    .themed-input { width: 100%; padding: 14px 14px 14px 50px; border: 2px solid var(--border-color); border-radius: var(--border-radius-element); background: var(--section-bg); font-family: 'Poppins', sans-serif; font-size: 15px; color: var(--text-primary); transition: all var(--transition-fast); }
+    .themed-input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+    .themed-input:focus { outline: none; border-color: var(--primary-color); background-color: var(--white-color); box-shadow: 0 0 0 4px var(--primary-glow); }
+
+    .input-icon { position: absolute; top: 50%; left: 18px; transform: translateY(-50%); color: var(--text-secondary); font-size: 18px; transition: color var(--transition-fast); }
+    .themed-input:focus + .input-icon { color: var(--primary-color); }
+    #togglePassword { position: absolute; top: 50%; right: 15px; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 18px; }
+    
+    .login-btn { margin-top: 15px; padding: 15px; width: 100%; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; border: none; border-radius: var(--border-radius-element); font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 20px -6px var(--primary-glow); transition: all var(--transition-smooth); position: relative; overflow: hidden; animation: fadeInUp 0.8s 0.4s ease-in-out both; }
+    .login-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 25px -5px var(--primary-glow); }
+    .login-btn:active { transform: translateY(-1px); box-shadow: 0 6px 15px -4px var(--primary-glow); }
+
+    .login-btn .btn-text { transition: opacity 0.2s ease-out; }
+    .login-btn .loader { position: absolute; top: 50%; left: 50%; margin-top: -12px; margin-left: -12px; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--white-color); border-radius: 50%; animation: spin 0.8s linear infinite; opacity: 0; transition: opacity 0.2s ease-in; }
+    .login-btn.loading .btn-text { opacity: 0; }
+    .login-btn.loading .loader { opacity: 1; }
+
+    .extra { margin-top: 25px; text-align: center; font-size: 14px; color: var(--text-secondary); animation: fadeInUp 0.8s 0.5s ease-in-out both; }
+    .extra a { color: var(--primary-dark); text-decoration: none; font-weight: 600; }
+    .extra a:hover { text-decoration: underline; }
+
+    .flash-message { margin-bottom: 15px; padding: 12px 15px; border-radius: var(--border-radius-element); font-size: 14px; font-weight: 500; border-left: 5px solid; }
+    .flash-success { background: #E9F8F1; color: #17834D; border-color: #4CAF50; }
+    .flash-danger { background: #FEF0F1; color: #D73244; border-color: #E84A4A; }
+    .flash-warning { background: #FFF9E9; color: #C59714; border-color: #F0A830; }
+
+    /* Animations from login.html */
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+  </style>
+</head>
+<body>
+
+  <div class="smartphone">
+    <div class="screen-content">
+
+      <!-- ================== Part 1: Loading Content ================== -->
+      <!-- This is visible first, then fades out. -->
+      <div class="loading-wrapper">
+        <div class="logo-animation-container">
+          <img src="static/logo.png" alt="Masika Health Logo" class="logo">
+        </div>
+        <h2 id="brand-name-animated">MASIKA</h2>
+        <p>Rewrite Your Period Story</p>
+      </div>
+
+      <!-- =================== Part 2: Login Content =================== -->
+      <!-- This is hidden initially, then fades in. -->
+      <div class="login-container">
+        <div class="welcome-header">
+          <h2>Welcome Back!</h2>
+          <p>Login to continue your journey</p>
+        </div>
+        
+        <!-- Flash messages (logic unchanged) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Login Form (logic unchanged) -->
+        <form method="POST" action="{{ url_for('login') }}" id="login-form">
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" class="themed-input" placeholder="Enter your email" required>
+            <i class="fa-solid fa-at input-icon"></i>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" class="themed-input" placeholder="Enter your password" required>
+            <i class="fa-solid fa-lock input-icon"></i>
+            <button type="button" id="togglePassword" aria-label="Show password">
+                <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          
+          <button type="submit" class="login-btn">
+            <span class="btn-text">Login</span>
+            <div class="loader"></div>
+          </button>
+        </form>
+        
+        <div class="extra">
+          <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- PART 1: LOGIC FROM loading.html ---
+      const brandNameEl = document.getElementById('brand-name-animated');
+      const languages = [ "MASIKA", "मासिका", "মাসিকা", "మాసిక", "மாசிகா", "ಮಾಸಿಕ",  "മാസിക", "માસિકા" ];
+      let currentIndex = 0;
+      let languageInterval;
+
+      const changeLanguage = () => {
+        brandNameEl.style.opacity = '0';
+        setTimeout(() => {
+          currentIndex = (currentIndex + 1) % languages.length;
+          brandNameEl.textContent = languages[currentIndex];
+          brandNameEl.style.opacity = '1';
+        }, 100); 
+      };
+      
+      languageInterval = setInterval(changeLanguage, 450); 
+      
+      // MODIFICATION: Instead of redirecting, this now handles the transition.
+      setTimeout(() => {
+          const loadingWrapper = document.querySelector('.loading-wrapper');
+          const loginContainer = document.querySelector('.login-container');
+
+          // Stop the language cycling
+          clearInterval(languageInterval);
+
+          // 1. Fade out the loading wrapper
+          loadingWrapper.style.opacity = '0';
+          
+          // 2. After fade out is complete, hide it and show the login form
+          setTimeout(() => {
+              loadingWrapper.style.display = 'none';
+
+              // 3. Make the login container visible so CSS animations can run
+              loginContainer.style.display = 'flex';
+              
+              // 4. Trigger the fade-in animation for the login container
+              // A tiny delay ensures the 'display' change is rendered first
+              setTimeout(() => {
+                  loginContainer.style.opacity = '1';
+              }, 50);
+
+          }, 400); // This duration must match the transition in .loading-wrapper
+      
+      }, 3500); // Total time the loading screen is visible
+
+
+      // --- PART 2: LOGIC FROM login.html ---
+
+      // --- Password Visibility Toggle ---
+      const togglePassword = document.querySelector('#togglePassword');
+      const passwordInput = document.querySelector('#password');
+      const eyeIcon = togglePassword.querySelector('i');
+
+      togglePassword.addEventListener('click', function () {
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordInput.setAttribute('type', type);
+          eyeIcon.classList.toggle('fa-eye');
+          eyeIcon.classList.toggle('fa-eye-slash');
+      });
+
+      // --- Login Button Loading Animation ---
+      const loginForm = document.getElementById('login-form');
+      const loginButton = loginForm.querySelector('.login-btn');
+      
+      loginForm.addEventListener('submit', (e) => {
+          if (loginForm.checkValidity()) {
+              loginButton.classList.add('loading');
+              loginButton.disabled = true; 
+          }
+      });
+    });
+  </script>
+
+</body>
+</html>

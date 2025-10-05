@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masika Health - Loading...</title>
+  
+  <!-- Fonts (same as other pages) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* Base theme variables from your other pages */
+    :root {
+      --primary-color: #F95B5B; --primary-dark: #E84A4A; --primary-glow: rgba(249, 91, 91, 0.25); --page-bg: #fef9f8; --container-bg: #ffffff; --section-bg: #FFF5F5; --text-primary: #1e2022; --text-secondary: #5a6472; --white-color: #ffffff; --border-color: #f3e6e6; --border-radius-phone: 40px; --border-radius-element: 14px; --transition-smooth: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); --transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; width: 100%; font-family: 'Poppins', sans-serif; overflow: hidden; }
+    body { background-color: var(--page-bg); display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+    .smartphone { width: 380px; height: 100%; max-height: 700px; background-color: var(--white-color); border-radius: var(--border-radius-phone); box-shadow: 0 25px 60px -12px rgba(0,0,0,0.2), 0 0px 15px rgba(0,0,0,0.1); display: flex; overflow: hidden; position: relative; }
+    .screen-content { width: 100%; height: 100%; background-color: var(--container-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; border-radius: var(--border-radius-phone); }
+    
+    .loading-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .logo-animation-container { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; }
+    .logo { width: 100px; height: 100px; z-index: 2; filter: drop-shadow(0 8px 15px rgba(0,0,0,0.08)); animation: heartbeat 2s ease-in-out infinite; }
+    
+    .logo-animation-container::before,
+    .logo-animation-container::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid var(--primary-glow); border-radius: 50%; z-index: 1; animation: radiate 2s ease-out infinite; }
+    .logo-animation-container::after { animation-delay: 1s; }
+
+    h2 {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--primary-dark); 
+      margin-bottom: 5px;
+      letter-spacing: 2px;
+      min-height: 45px; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* --- FIX: EVEN FASTER TRANSITION --- */
+      transition: opacity 0.1s ease-in-out; 
+    }
+    
+    p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      animation: fadeIn 1s 0.2s ease-in-out both;
+    }
+
+    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes radiate { from { width: 80%; height: 80%; opacity: 1; } to { width: 200%; height: 200%; opacity: 0; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <div class="smartphone">
+    <div class="screen-content">
+      <div class="loading-wrapper">
+        <div class="logo-animation-container">
+          <img src="static/logo.png" alt="Masika Health Logo" class="logo">
+        </div>
+        <h2 id="brand-name-animated">MASIKA</h2>
+        <p>Rewrite Your Period Story</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const brandNameEl = document.getElementById('brand-name-animated');
+      const languages = [ "MASIKA", "मासिका", "মাসিকা", "మాసిక", "மாசிகா", "ಮಾಸಿಕ",  "മാസിക", "માસિકા" ];
+      let currentIndex = 0;
+
+      const changeLanguage = () => {
+        brandNameEl.style.opacity = '0';
+        setTimeout(() => {
+          currentIndex = (currentIndex + 1) % languages.length;
+          brandNameEl.textContent = languages[currentIndex];
+          brandNameEl.style.opacity = '1';
+        }, 100); // --- FIX: EVEN FASTER TRANSITION. Must match CSS.
+      };
+      
+      // --- FIX: EVEN FASTER CYCLE DURATION ---
+      setInterval(changeLanguage, 600); 
+    });
+
+
+    // --- FIX: SHORTER PAGE DURATION ---
+    setTimeout(function() {
+      window.location.href = "{{ url_for('login') }}";
+    }, 5500); 
+  </script>
+
+</body>
+</html>
